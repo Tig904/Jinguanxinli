@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>锦观心理测评</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f0fbf7'/%3E%3Cpath d='M32 14c-9 6-12 12-12 20a12 12 0 0 0 24 0c0-8-3-14-12-20z' fill='%231f8a70'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --ink:#26473e;
+    --ink-soft:#405f57;
+    --muted:#6b837d;
+    --teal:#1f8a70;
+    --teal-2:#4dbda0;
+    --teal-soft:#e6f5f0;
+    --mint:#cdeee2;
+    --bg:#f6fbf9;
+    --glass:rgba(255,255,255,.62);
+    --glass-brd:rgba(255,255,255,.85);
+    --shadow:0 22px 60px rgba(38,71,62,.14);
+    --shadow-soft:0 10px 30px rgba(38,71,62,.10);
+    --radius:26px;
+    --font:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 12% -10%, #eefaf5 0%, transparent 55%),
+      radial-gradient(1000px 700px at 105% 8%, #eaf6f1 0%, transparent 50%),
+      var(--bg);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .bg-scene .blob{position:absolute;border-radius:50%;filter:blur(46px);opacity:.55;mix-blend-mode:multiply}
+  .bg-scene .b1{width:420px;height:420px;left:-90px;top:-60px;background:#bfead9}
+  .bg-scene .b2{width:520px;height:520px;right:-140px;top:8%;background:#d8f0e6}
+  .bg-scene .b3{width:380px;height:380px;left:34%;bottom:-120px;background:#cdeee2}
+
+  /* ===== 顶栏 ===== */
+  header#topbar{
+    position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 26px;margin:14px 18px 0;
+    background:var(--glass);border:1px solid var(--glass-brd);border-radius:20px;
+    box-shadow:var(--shadow-soft);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  }
+  #topbar.hidden{display:none}
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand .logo{height:44px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(31,138,112,.25))}
+  .brand-name{font-size:22px;font-weight:700;letter-spacing:.5px;color:var(--ink);white-space:nowrap}
+  .user-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .user-chip{font-size:13px;color:var(--muted);background:#fff;border:1px solid #e2efe9;padding:6px 12px;border-radius:999px}
+
+  /* ===== 按钮 ===== */
+  .btn{
+    font-family:inherit;font-size:15px;border:none;cursor:pointer;border-radius:12px;
+    padding:11px 18px;transition:transform .15s ease,box-shadow .2s ease,background .2s;
+    display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  }
+  .btn:active{transform:translateY(1px) scale(.99)}
+  .btn.primary{
+    background:linear-gradient(135deg,var(--teal),var(--teal-2));
+    color:#fff;box-shadow:0 10px 24px rgba(31,138,112,.32);font-weight:600;
+  }
+  .btn.primary:hover{box-shadow:0 14px 30px rgba(31,138,112,.4)}
+  .btn.ghost{background:rgba(255,255,255,.7);border:1px solid #e0ede7;color:var(--ink-soft)}
+  .btn.ghost:hover{background:#fff;border-color:var(--teal-2)}
+  .btn.block{width:100%}
+  .btn.sm{padding:8px 14px;font-size:14px}
+
+  /* ===== 视图容器 ===== */
+  #app{position:relative;z-index:5;padding:26px 18px 60px}
+  .view{max-width:560px;margin:0 auto}
+  .view.hidden{display:none}
+  .view.wide{max-width:760px}
+
+  /* ===== 液态玻璃卡片 ===== */
+  .glass-card{
+    position:relative;
+    background:var(--glass);
+    border:1px solid var(--glass-brd);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(22px) saturate(160%);
+    -webkit-backdrop-filter:blur(22px) saturate(160%);
+    padding:34px 36px;
+  }
+  .glass-card::before{
+    content:"";position:absolute;inset:0;border-radius:var(--radius);
+    background:linear-gradient(160deg,rgba(255,255,255,.5),rgba(255,255,255,.06));
+    pointer-events:none;
+  }
+  .glass-card.narrow{max-width:520px;margin:0 auto}
+  .glass-card h2{font-size:24px;font-weight:700;color:var(--ink);margin-bottom:6px;position:relative}
+  .glass-card .sub{font-size:14px;color:var(--muted);margin-bottom:22px;position:relative}
+  .glass-card .foot-note{font-size:12.5px;color:var(--muted);text-align:center;margin-top:18px;position:relative}
+
+  /* ===== 登录/注册 ===== */
+  #view-auth .glass-card{max-width:460px;margin:2vh auto}
+  .auth-head{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:22px;position:relative}
+  .auth-head .auth-logo{width:86px;height:auto;object-fit:contain;filter:drop-shadow(0 6px 16px rgba(31,138,112,.28))}
+  .auth-title{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:2px}
+  .auth-slogan{font-size:13px;color:var(--muted);letter-spacing:3px}
+  .tabs{display:flex;background:rgba(255,255,255,.55);border:1px solid #e2efe9;border-radius:14px;padding:5px;margin-bottom:22px;position:relative}
+  .tabs .tab{flex:1;text-align:center;padding:10px;border:none;background:transparent;border-radius:10px;font-size:15px;cursor:pointer;color:var(--muted);font-family:inherit;transition:.2s}
+  .tabs .tab.active{background:#fff;color:var(--teal);font-weight:600;box-shadow:0 4px 12px rgba(38,71,62,.10)}
+
+  .field{margin-bottom:16px;position:relative}
+  .field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:7px;font-weight:500}
+  .field .input-wrap{display:flex;align-items:center;background:rgba(255,255,255,.6);border:1px solid #e0ede7;border-radius:13px;overflow:hidden;transition:.2s;position:relative}
+  .field .input-wrap:focus-within{border-color:var(--teal-2);background:#fff;box-shadow:0 0 0 3px rgba(31,138,112,.14)}
+  .field .input-wrap svg{flex:0 0 auto;margin-left:14px;color:var(--teal)}
+  .field input{
+    flex:1;width:100%;border:none;background:transparent;padding:12px 14px;font-size:16px;color:var(--ink);
+    font-family:inherit;outline:none;
+  }
+  .field input::placeholder{color:#9db3ac}
+  .field.hint .input-wrap input{pointer-events:none;color:var(--muted);background:#f0f6f3}
+  .err{font-size:12.5px;color:#d64545;margin-top:6px;min-height:0;display:none}
+  .err.show{display:block}
+
+  .form-actions{margin-top:20px}
+  .switch-link{font-size:13px;color:var(--muted);text-align:center;margin-top:14px;position:relative}
+  .switch-link a{color:var(--teal);cursor:pointer;font-weight:600;text-decoration:none}
+  .switch-link a:hover{text-decoration:underline}
+
+  /* 免责声明 */
+  .disclaimer{
+    display:flex;align-items:flex-start;gap:10px;cursor:pointer;
+    background:rgba(255,255,255,.55);border:1px solid #e2efe9;border-radius:14px;
+    padding:13px 15px;margin-top:6px;position:relative;user-select:none;
+  }
+  .disclaimer input{width:18px;height:18px;margin-top:2px;accent-color:var(--teal);flex:0 0 auto;cursor:pointer}
+  .disclaimer .dis-text{font-size:13px;color:var(--ink-soft);line-height:1.7}
+  .disclaimer .dis-text b{color:var(--teal)}
+  .disclaimer .dis-box{margin-top:8px;padding:9px 11px;background:rgba(31,138,112,.05);border-left:3px solid var(--teal);border-radius:8px;font-size:12.5px;color:var(--ink-soft);line-height:1.7}
+
+  /* ===== 首页 ===== */
+  .hero-card{padding:40px 34px;text-align:center}
+  .hero-card .hero-icon{width:64px;height:64px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:linear-gradient(135deg,var(--teal),var(--teal-2));color:#fff;box-shadow:0 14px 28px rgba(31,138,112,.30)}
+  .hero-card h1{font-size:26px;font-weight:700;margin-bottom:10px;position:relative}
+  .hero-card .intro{color:var(--ink-soft);font-size:15px;line-height:1.9;max-width:430px;margin:0 auto 6px;position:relative}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 26px;position:relative}
+  .meta-row .chip{background:#fff;border:1px solid #e2efe9;border-radius:999px;padding:8px 16px;font-size:13px;color:var(--ink-soft)}
+  .meta-row .chip b{color:var(--teal);font-weight:600}
+
+  /* ===== 测试 ===== */
+  .test-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative}
+  .test-top .counter{font-size:14px;color:var(--muted)}
+  .test-top .counter b{color:var(--teal);font-size:16px}
+  .progress{height:8px;background:rgba(255,255,255,.7);border-radius:99px;overflow:hidden;border:1px solid #e6f1ec;margin-bottom:20px;position:relative}
+  .progress .bar{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--teal-2));border-radius:99px;transition:width .3s ease}
+  .q-card{padding:26px 30px}
+  .q-card .q-dim{font-size:12px;color:var(--teal);font-weight:600;letter-spacing:1px;margin-bottom:10px;position:relative}
+  .q-card .q-text{font-size:18px;line-height:1.7;font-weight:600;color:var(--ink);margin-bottom:22px;position:relative}
+  .options{display:flex;flex-direction:column;gap:12px;position:relative}
+  .option{
+    display:flex;align-items:center;gap:14px;cursor:pointer;
+    background:rgba(255,255,255,.6);border:1px solid #e2efe9;border-radius:14px;padding:14px 16px;transition:.18s;
+  }
+  .option:hover{background:#fff;border-color:var(--teal-2)}
+  .option .dot{width:22px;height:22px;flex:0 0 auto;border-radius:50%;border:2px solid #c6dcd4;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;transition:.18s}
+  .option .label{font-size:15px;color:var(--ink-soft);flex:1}
+  .option.sel{background:var(--teal-soft);border-color:var(--teal)}
+  .option.sel .dot{background:var(--teal);border-color:var(--teal)}
+  .option.sel .label{color:var(--ink);font-weight:600}
+  .q-nav{display:flex;gap:12px;margin-top:24px;position:relative}
+  .q-nav .btn{flex:1}
+
+  /* ===== 结果 ===== */
+  .result-head{text-align:center;padding:26px 20px 8px;position:relative}
+  .score-ring{
+    width:170px;height:170px;margin:0 auto 16px;border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:conic-gradient(var(--teal-2) var(--p,0%), #e4f2ed 0);
+    position:relative;
+  }
+  .score-ring::after{content:"";position:absolute;inset:12px;border-radius:50%;background:#fff}
+  .score-ring .num{position:relative;z-index:1;font-size:42px;font-weight:800;color:var(--ink);line-height:1}
+  .score-ring .cap{position:relative;z-index:1;font-size:13px;color:var(--muted);margin-top:4px}
+  .level-badge{display:inline-block;padding:8px 20px;border-radius:999px;font-weight:700;font-size:15px;margin:6px 0 2px;position:relative}
+  .level-1{background:#e6f5ee;color:#17734f}
+  .level-2{background:#fff6df;color:#a8741a}
+  .level-3{background:#ffe9dd;color:#c05b26}
+  .level-4{background:#fde6e4;color:#b3392e}
+  .result-head .desc{font-size:14px;color:var(--ink-soft);max-width:460px;margin:10px auto 0;line-height:1.8;position:relative}
+  .dims{margin:22px 4px 0;position:relative}
+  .dims .d-title{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:14px}
+  .dim-row{margin-bottom:16px}
+  .dim-row .dim-head{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:7px}
+  .dim-row .dim-head b{color:var(--teal);font-weight:700}
+  .dim-track{height:12px;background:#eef4f1;border-radius:99px;overflow:hidden}
+  .dim-fill{height:100%;width:0;border-radius:99px;transition:width .6s ease}
+  .result-note{margin-top:24px;padding:14px 16px;background:rgba(255,255,255,.5);border:1px solid #e6f1ec;border-radius:14px;font-size:12.5px;color:var(--muted);line-height:1.8;position:relative}
+  .result-actions{display:flex;gap:12px;margin-top:22px;position:relative}
+  .result-actions .btn{flex:1}
+
+  /* ===== 弹窗 ===== */
+  .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal.hidden{display:none}
+  .modal .backdrop{position:absolute;inset:0;background:rgba(38,71,62,.22);backdrop-filter:blur(3px)}
+  .modal .modal-card{position:relative;width:100%;max-width:480px}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;position:relative}
+  .modal-head h3{font-size:19px;color:var(--ink)}
+  .modal-close{background:#fff;border:1px solid #e2efe9;border-radius:10px;width:34px;height:34px;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+
+  /* ===== Toast ===== */
+  #toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(20px);z-index:90;opacity:0;pointer-events:none;transition:.3s}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast .inner{background:rgba(38,71,62,.92);color:#fff;padding:12px 22px;border-radius:12px;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+
+  /* ===== 响应式 ===== */
+  @media (max-width:560px){
+    header#topbar{padding:12px 14px;margin:10px 10px 0;flex-wrap:wrap;gap:10px}
+    .brand .logo{height:36px}
+    .brand-name{font-size:18px}
+    .glass-card{padding:24px 20px;border-radius:20px}
+    #app{padding:16px 12px 50px}
+    .q-text{font-size:16.5px}
+    .score-ring{width:150px;height:150px}
+    .user-actions{width:100%;justify-content:flex-end}
+  }
+</style>
+</head>
+<body>
+<div class="bg-scene" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+
+<!-- ===== 顶栏 ===== -->
+<header id="topbar" class="hidden">
+  <div class="brand">
+    <img class="logo" src="assets/logo.jpg" alt="锦观心理测评 Logo">
+    <span class="brand-name">锦观心理测评</span>
+  </div>
+  <div class="user-actions">
+    <span id="topUserName" class="user-chip"></span>
+    <button id="btnEditProfile" class="btn ghost sm">修改个人信息</button>
+    <button id="btnLogout" class="btn ghost sm">退出</button>
+  </div>
+</header>
+
+<main id="app">
+  <!-- ===== 登录 / 注册 ===== -->
+  <section class="view" id="view-auth">
+    <div class="glass-card">
+      <div class="auth-head">
+        <img class="auth-logo" src="assets/logo.jpg" alt="锦观心理测评">
+        <div class="auth-title">锦观心理测评</div>
+        <div class="auth-slogan">单位员工心理健康服务</div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="login" type="button">登录</button>
+        <button class="tab" data-tab="register" type="button">注册</button>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label>身份证号</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h6M7 11h2M11 11h2"/></svg>
+            <input id="lg_id" type="text" placeholder="请输入身份证号" autocomplete="off">
+          </div>
+          <div class="err" id="lg_id_err"></div>
+        </div>
+        <div class="field">
+          <label>密码</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input id="lg_pw" type="password" placeholder="请输入密码" autocomplete="off">
+          </div>
+          <div class="err" id="lg_pw_err"></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn primary block">登 录</button></div>
+        <div class="switch-link">还没有账号？<a id="gotoReg">立即注册</a></div>
+      </form>
+
+      <form id="registerForm" novalidate hidden>
+        <div class="field">
+          <label>身份证号（作为账号）</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h6M7 11h2M11 11h2"/></svg>
+            <input id="rg_id" type="text" placeholder="请输入18位身份证号" autocomplete="off">
+          </div>
+          <div class="err" id="rg_id_err"></div>
+        </div>
+        <div class="field">
+          <label>密码</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input id="rg_pw" type="password" placeholder="请设置密码（至少6位）" autocomplete="off">
+          </div>
+          <div class="err" id="rg_pw_err"></div>
+        </div>
+        <div class="field">
+          <label>确认密码</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input id="rg_pw2" type="password" placeholder="请再次输入密码" autocomplete="off">
+          </div>
+          <div class="err" id="rg_pw2_err"></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn primary block">注册并登录</button></div>
+        <div class="switch-link">已有账号？<a id="gotoLogin">直接登录</a></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== 个人信息填写 ===== -->
+  <section class="view hidden" id="view-info">
+    <div class="glass-card narrow">
+      <h2>完善个人信息</h2>
+      <p class="sub">信息仅保存在本机浏览器，用于匹配年龄段测评题目</p>
+      <form id="infoForm" novalidate>
+        <div class="field">
+          <label>身份证号</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h6M7 11h2M11 11h2"/></svg>
+            <input id="if_id" type="text" placeholder="请输入身份证号" autocomplete="off">
+          </div>
+          <div class="err" id="if_id_err"></div>
+        </div>
+        <div class="field">
+          <label>姓名</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-3 4-4 8-4s7 1 8 4"/></svg>
+            <input id="if_name" type="text" placeholder="请输入姓名" autocomplete="off">
+          </div>
+          <div class="err" id="if_name_err"></div>
+        </div>
+        <div class="field">
+          <label>单位</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13M9 21v-4h6v4"/></svg>
+            <input id="if_unit" type="text" placeholder="请输入所在单位" autocomplete="off">
+          </div>
+          <div class="err" id="if_unit_err"></div>
+        </div>
+        <div class="field">
+          <label>年龄</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+            <input id="if_age" type="number" min="1" max="120" placeholder="请输入年龄" autocomplete="off">
+          </div>
+          <div class="err" id="if_age_err"></div>
+        </div>
+        <label class="disclaimer">
+          <input type="checkbox" id="if_agree" checked>
+          <span class="dis-text">勾选默认同意《免责声明》<br><b>《免责声明》</b>
+            <div class="dis-box">本站只为单位心理测试使用，不上传任何个人信息。</div>
+          </span>
+        </label>
+        <div class="form-actions"><button type="submit" class="btn primary block">保存并进入测评</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== 首页 ===== -->
+  <section class="view wide hidden" id="view-home">
+    <div class="glass-card hero-card">
+      <div class="hero-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>
+      </div>
+      <h1 id="homeHello">你好</h1>
+      <p class="intro" id="homeIntro">欢迎使用「锦观心理测评」。本测评共 60 道选择题，将根据您的年龄段匹配对应题目，帮助您了解近期的身心状态。完成约需 10 分钟。</p>
+      <div class="meta-row" id="homeMeta"></div>
+      <button id="btnStart" class="btn primary" style="min-width:220px">开始测试</button>
+      <p class="foot-note">测试结果仅保存在本机，仅供个人参考，不构成医学诊断。</p>
+    </div>
+  </section>
+
+  <!-- ===== 测试 ===== -->
+  <section class="view hidden" id="view-test">
+    <div class="test-top">
+      <span class="counter">第 <b id="qNo">1</b> / <span id="qTotal">60</span> 题</span>
+      <span class="counter" id="qDimLabel" style="font-size:12.5px"></span>
+    </div>
+    <div class="progress"><div class="bar" id="qBar"></div></div>
+    <div class="glass-card q-card">
+      <div class="q-dim" id="qDim">—</div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="qOptions"></div>
+      <div class="q-nav">
+        <button id="btnPrev" class="btn ghost">上一题</button>
+        <button id="btnNext" class="btn primary">下一题</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 结果 ===== -->
+  <section class="view hidden" id="view-result">
+    <div class="glass-card">
+      <div class="result-head">
+        <div class="score-ring" id="scoreRing"><span class="num" id="scoreNum">0</span><span class="cap">总分</span></div>
+        <div><span class="level-badge" id="levelBadge">—</span></div>
+        <p class="desc" id="resultDesc"></p>
+      </div>
+      <div class="dims">
+        <div class="d-title">各维度得分</div>
+        <div id="dimBars"></div>
+      </div>
+      <div class="result-note">本测评结果由题目作答自动汇总生成，仅作为了解自身状态的参考，不能替代专业心理医生的诊断与建议。若您感到明显困扰，请及时联系单位心理关爱服务或专业机构。</div>
+      <div class="result-actions">
+        <button id="btnRetry" class="btn ghost">重新测试</button>
+        <button id="btnHome" class="btn primary">返回首页</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== 修改个人信息弹窗 ===== -->
+<div class="modal hidden" id="profileModal">
+  <div class="backdrop" data-close="1"></div>
+  <div class="modal-card">
+    <div class="glass-card">
+      <div class="modal-head">
+        <h3>修改个人信息</h3>
+        <button class="modal-close" type="button" data-close="1">×</button>
+      </div>
+      <form id="profileForm" novalidate>
+        <div class="field">
+          <label>身份证号</label>
+          <div class="input-wrap hint">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h6M7 11h2M11 11h2"/></svg>
+            <input id="pf_id" type="text" readonly>
+          </div>
+        </div>
+        <div class="field">
+          <label>姓名</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-3 4-4 8-4s7 1 8 4"/></svg>
+            <input id="pf_name" type="text" autocomplete="off">
+          </div>
+          <div class="err" id="pf_name_err"></div>
+        </div>
+        <div class="field">
+          <label>单位</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13M9 21v-4h6v4"/></svg>
+            <input id="pf_unit" type="text" autocomplete="off">
+          </div>
+          <div class="err" id="pf_unit_err"></div>
+        </div>
+        <div class="field">
+          <label>年龄</label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+            <input id="pf_age" type="number" min="1" max="120" autocomplete="off">
+          </div>
+          <div class="err" id="pf_age_err"></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn primary block">保存修改</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><div class="inner" id="toastText"></div></div>
+
+<script>
+/* ===================== 题目数据区 ===================== */
+/* ====BANK_START==== */
+window.AGE_GROUPS = [
+  {key:"teen", label:"18岁以下", min:0, max:17,
+   dims:["学业适应","同伴关系","情绪波动","自我认同","压力应对"],
+   q:[
+    "我觉得学习压力很大，常常喘不过气来。",
+    "面对考试，我容易紧张得睡不好觉。",
+    "我很难集中注意力完成作业。",
+    "我对自己的学习成绩感到担忧。",
+    "我常常因为学业任务太多而感到疲惫。",
+    "我在课堂上难以跟上老师的节奏。",
+    "一想到考试或升学，我就会感到焦虑。",
+    "我觉得自己很难平衡各科的学习任务。",
+    "我经常为了学习放弃休息和娱乐。",
+    "我对学习提不起兴趣和动力。",
+    "我害怕在课堂上被点名回答问题。",
+    "我感觉学习几乎占据了我全部的生活。",
+    "我觉得很难和同学相处融洽。",
+    "我担心别人不喜欢我、不接纳我。",
+    "在集体活动中我常常感到被孤立。",
+    "我害怕和别人起冲突，常常委屈自己。",
+    "我几乎没有可以交心的好朋友。",
+    "我不太敢表达自己的想法，怕被嘲笑。",
+    "我感觉自己很难融入朋友圈。",
+    "被别人议论时我会非常难受。",
+    "我经常感到同学对我有敌意。",
+    "我宁愿一个人待着，也不愿和大家相处。",
+    "与人相处时我总是很在意对方怎么看我。",
+    "我常常因为人际问题而分心、烦恼。",
+    "我的情绪起伏很大，容易突然低落。",
+    "我常常莫名感到烦躁不安。",
+    "我容易因为小事发脾气。",
+    "我经常感到难过，却说不清原因。",
+    "我很难控制自己的情绪。",
+    "我常常感到紧张或害怕。",
+    "我的心情经常在短时间内大起大落。",
+    "我容易陷入消极的想法里。",
+    "我常常感到孤独和空虚。",
+    "我容易对周围的事情过度敏感。",
+    "我常常感到心里闷闷的，提不起劲。",
+    "我有时会莫名地大哭或情绪崩溃。",
+    "我常常怀疑自己是不是不够好。",
+    "我不太清楚自己到底是个怎样的人。",
+    "我总觉得自己不如别人。",
+    "我很在意自己的外表和他人对我的评价。",
+    "我常常感到迷茫，不知道未来该做什么。",
+    "我经常否定自己的能力。",
+    "我觉得自己没有太多优点。",
+    "我不太确定自己的兴趣和方向。",
+    "我很容易受他人影响而改变自己。",
+    "我对自己缺乏信心。",
+    "我常常觉得自己是个失败者。",
+    "我不敢相信自己的判断和决定。",
+    "遇到困难时，我常常不知道该怎么办。",
+    "我习惯把烦恼憋在心里，不愿说出来。",
+    "面对压力时我容易手足无措。",
+    "我很难主动向别人寻求帮助。",
+    "我总是把事情往坏处想。",
+    "压力大的时候，我常常睡不好或吃不下。",
+    "我很少用运动或爱好来调节情绪。",
+    "我觉得自己扛不住打击。",
+    "遇到挫折后，我很难恢复心情。",
+    "我常常用逃避的方式处理问题。",
+    "压力来临时我容易慌乱，不知道从何下手。",
+    "我很少能冷静地分析并解决问题。"
+   ]},
+  {key:"young", label:"18-30岁", min:18, max:30,
+   dims:["工作压力","职业发展","情绪状态","人际关系","婚恋与家庭"],
+   q:[
+    "我经常感到工作任务繁重，难以承受。",
+    "加班或赶任务已经成为我生活的常态。",
+    "面对工作要求，我常常感到焦虑。",
+    "我很难在工作时间之外真正放松下来。",
+    "我总觉得时间不够用，压力很大。",
+    "工作中的琐事常常让我烦躁。",
+    "我担心自己无法胜任当前的工作。",
+    "我常常因为工作压力而失眠或疲惫。",
+    "我很难拒绝不合理的工作安排。",
+    "工作压力已经影响到我的身心健康。",
+    "我经常在休息时还想着工作上的事。",
+    "我感觉工作把我压得喘不过气。",
+    "我对自己的职业前景感到迷茫。",
+    "我觉得自己缺少清晰的职业规划。",
+    "我担心自己一直停在原地、没有进步。",
+    "看到同龄人发展顺利，我会感到焦虑。",
+    "我不确定现在的工作是否适合自己。",
+    "我经常为未来的职业选择而烦恼。",
+    "我觉得自己缺乏提升所需的能力。",
+    "我对换工作或转行感到犹豫和不安。",
+    "我害怕错过重要的职业机会。",
+    "我难以确定自己长期的发展方向。",
+    "我常因职业问题感到压力很大。",
+    "我对目前的工作状态感到不满意。",
+    "我常常感到情绪低落或提不起精神。",
+    "我容易因小事感到烦躁。",
+    "我经常感到焦虑和不安。",
+    "我的心情波动较大，难以稳定。",
+    "我常常感到疲惫，休息后也难以恢复。",
+    "我容易陷入自我怀疑和消极想法。",
+    "我经常感到孤独，尽管身边有人。",
+    "我很难真正放松下来。",
+    "我常常对未来感到担忧。",
+    "我容易过度思虑一件事情。",
+    "我经常感到闷闷不乐。",
+    "我有时会突然情绪崩溃。",
+    "我很难处理好与同事或同学的关系。",
+    "我害怕表达自己的真实想法，怕得罪人。",
+    "我常常感到在人群中不被理解。",
+    "面对冲突时，我习惯回避或忍让。",
+    "我很少主动拓展自己的社交圈。",
+    "与上级或老师相处时我常感到紧张。",
+    "我常常在意别人对我的评价。",
+    "我觉得自己很难真正融入一个集体。",
+    "我缺乏可以倾诉内心的亲密朋友。",
+    "我经常为处理人际关系而烦恼。",
+    "我宁愿独处，也不愿应付社交。",
+    "被人误解时我会非常难受。",
+    "我对恋爱或婚姻感到迷茫和焦虑。",
+    "我常为家庭的期望感到压力。",
+    "我担心自己难以平衡家庭与工作。",
+    "与家人沟通时我常常感到困难。",
+    "我害怕自己无法经营好一段关系。",
+    "我常常为婚恋问题感到烦恼。",
+    "家人的催促让我倍感压力。",
+    "我缺乏处理亲密关系的能力和信心。",
+    "我常为家庭经济或责任感到担忧。",
+    "我很难在家庭和事业之间做出取舍。",
+    "我有时觉得家庭是压力的来源。",
+    "我担心自己一直找不到合适的伴侣。"
+   ]},
+  {key:"mid", label:"31-45岁", min:31, max:45,
+   dims:["职业倦怠","家庭责任","健康与睡眠","情绪状态","工作生活平衡"],
+   q:[
+    "我经常感到工作耗尽了我的心力。",
+    "我对工作越来越提不起热情。",
+    "我常觉得工作没有意义、重复机械。",
+    "即使工作再努力，我也难有成就感。",
+    "我经常在上班前就感到疲惫厌倦。",
+    "我常常机械地应付工作，很少投入。",
+    "我感觉自己像一台工作机器。",
+    "我经常怀疑自己工作的价值。",
+    "面对工作我常常无精打采。",
+    "我很难从工作中获得满足感。",
+    "我常常想逃离工作一段时间。",
+    "我对工作的未来感到麻木和倦怠。",
+    "我常为家庭的经济压力感到焦虑。",
+    "上有老下有小的责任让我感到负担沉重。",
+    "我常常疲于应付家庭的各种事务。",
+    "我担心自己照顾不好家人。",
+    "家庭需求经常让我感到分身乏术。",
+    "我常常为了家庭牺牲自己的时间和需求。",
+    "我难以协调孩子教育与家庭安排。",
+    "家人的健康问题让我持续担忧。",
+    "我常感到家庭责任压得我喘不过气。",
+    "我很难抽出时间陪伴家人。",
+    "我常为家庭和工作的双重责任而烦恼。",
+    "我觉得自己承担了过重的家庭担子。",
+    "我经常失眠或入睡困难。",
+    "我常常感到身体疲惫、精力不足。",
+    "我担心自己的健康状况正在变差。",
+    "我经常头痛、肩颈不适或肠胃不适。",
+    "我很少有时间锻炼身体。",
+    "我常因工作生活压力影响睡眠质量。",
+    "我发现自己越来越容易疲劳。",
+    "我常常忽略身体发出的健康信号。",
+    "我担心熬夜已对我的身体造成影响。",
+    "我经常感到浑身乏力、提不起劲。",
+    "我很难保证规律的作息。",
+    "我常为自己的健康问题忧心忡忡。",
+    "我常常感到焦躁、易怒。",
+    "我经常觉得心里压着很多事。",
+    "我容易对家人或同事发脾气。",
+    "我常常感到闷闷不乐、提不起精神。",
+    "我难以从烦恼中抽离出来。",
+    "我经常感到心慌或紧张。",
+    "我的情绪常常不稳定。",
+    "我常感到内心疲惫、无力应对。",
+    "我容易把工作中的情绪带回家。",
+    "我常常感到压力无处释放。",
+    "我经常失眠时会反复想烦心事。",
+    "我有时会怀疑生活是否值得如此辛苦。",
+    "我很难在下班后真正放下工作。",
+    "工作几乎占满了我所有的时间。",
+    "我几乎没有属于自己的休闲时间。",
+    "我常常为了工作取消家庭或朋友安排。",
+    "我很难在工作和生活之间找到平衡。",
+    "我常因工作忙而错过陪伴家人的时刻。",
+    "我几乎没有精力去发展自己的爱好。",
+    "我常常带着工作压力入睡和醒来。",
+    "我很难拒绝工作上的额外要求。",
+    "我常感到工作和生活难以兼顾。",
+    "我很少能享受当下的生活。",
+    "我经常以工作为中心，忽略了其他。"
+   ]},
+  {key:"midold", label:"46-60岁", min:46, max:60,
+   dims:["工作与健康","家庭关系","情绪状态","适应变化","心理韧性"],
+   q:[
+    "我常常感到工作带来不小的身体负担。",
+    "我担心自己的精力和体力在下降。",
+    "我经常感到身体有些不适或疲劳。",
+    "我很难像年轻时那样应付工作强度。",
+    "我担心长期工作影响了自己的健康。",
+    "我常常忽略休息，硬撑着完成工作。",
+    "我注意到自己的记性或注意力有所下降。",
+    "我常为身体状况感到隐隐担忧。",
+    "我很少有精力进行规律锻炼。",
+    "我经常感到腰酸背痛或精力不济。",
+    "我担心健康问题会影响未来的生活。",
+    "我常感到身心都处于疲惫状态。",
+    "我与成年子女或家人的沟通常感困难。",
+    "我常为家人的未来和安排操心。",
+    "我担心自己逐渐在家庭中失去地位。",
+    "与伴侣之间我常感到缺乏交流。",
+    "我常为家庭中的代际矛盾烦恼。",
+    "我常常感到自己不被家人理解。",
+    "我担心自己对家庭的付出不被认可。",
+    "家人间的矛盾常让我心情烦闷。",
+    "我很难表达对家人的真实感受。",
+    "我常为子女的婚姻、工作等操心。",
+    "我有时觉得家庭关系让自己心累。",
+    "我很难处理好与年轻一代的观念差异。",
+    "我常常感到情绪低落或焦虑。",
+    "我容易为生活琐事感到烦躁。",
+    "我常常感到内心孤独。",
+    "我担心自己正在变老、变得无用。",
+    "我常因身体状况或家庭问题忧心忡忡。",
+    "我的情绪比过去更不稳定。",
+    "我经常感到闷闷不乐。",
+    "我常常对未来感到担忧。",
+    "我容易把事情想得过于悲观。",
+    "我有时感到生活缺乏乐趣。",
+    "我经常独自消化烦恼，不愿倾诉。",
+    "我常常觉得心里有许多放不下的事。",
+    "我很难适应工作或生活上的新变化。",
+    "面对新事物，我常常感到不知所措。",
+    "我担心自己跟不上时代和技术的步伐。",
+    "我常常抵触生活方式的改变。",
+    "面对退休或岗位变化，我常感到不安。",
+    "我很难接受自己的年龄在增长。",
+    "我常为未来的不确定性感到焦虑。",
+    "我不太愿意尝试新事物和新方法。",
+    "生活中的变动常让我难以平静。",
+    "我担心自己无法适应未来的生活。",
+    "我常常怀念过去，对现状感到不满。",
+    "变化来临时我容易慌乱。",
+    "遇到挫折后，我很难重新振作。",
+    "我常觉得自己扛不住生活的压力。",
+    "面对困难，我常常感到无助。",
+    "我很少能从失败中很快恢复过来。",
+    "我常感到精力和心力都在透支。",
+    "我很难在压力下保持冷静。",
+    "我经常怀疑自己应对生活的能力。",
+    "面对困境，我常常选择回避。",
+    "我很少主动寻找调节情绪的方法。",
+    "我常觉得生活压力难以承受。",
+    "遇到打击，我往往需要很久才能平复。",
+    "我对自己应对未来的信心不足。"
+   ]},
+  {key:"elder", label:"60岁以上", min:61, max:200,
+   dims:["孤独感","健康担忧","睡眠质量","生活满意度","社会支持"],
+   q:[
+    "我常常感到孤独。",
+    "我身边能聊天说话的人不多。",
+    "我经常感到被这个世界遗忘。",
+    "子女或亲人不在身边时我特别想念。",
+    "我常常一个人待着，很少与人来往。",
+    "我很少感到被人关心和牵挂。",
+    "我常常觉得没有人真正理解我。",
+    "独处时我常常感到空虚。",
+    "我很少主动联系老朋友或亲人。",
+    "我常常感到自己不被需要。",
+    "过节或家人团聚时我反而更感孤单。",
+    "我总觉得日子过得很冷清。",
+    "我经常担心自己的健康会出问题。",
+    "身体稍有不适我就会非常担心。",
+    "我常为看病、吃药的事情感到烦恼。",
+    "我担心自己会成为家人的负担。",
+    "我经常为慢性疾病感到忧心。",
+    "我害怕身体出现严重问题。",
+    "我常常担心自己生活无法自理。",
+    "我对就医和检查感到紧张。",
+    "我常为身体的疼痛或不适而烦躁。",
+    "我担心健康问题会拖累家人。",
+    "我经常反复查看自己的身体状况。",
+    "我对健康的担忧已影响到心情。",
+    "我经常难以入睡或半夜醒来。",
+    "我常常睡眠很浅，容易惊醒。",
+    "我早上醒来仍感觉疲惫。",
+    "我白天经常犯困、没精神。",
+    "我常为睡不好而感到烦恼。",
+    "我夜里经常起夜，影响睡眠。",
+    "我难以获得安稳、充足的睡眠。",
+    "我经常躺在床上很久才能睡着。",
+    "我白天常感到昏昏沉沉。",
+    "我常因失眠而情绪烦躁。",
+    "我的作息常常不规律。",
+    "睡眠问题让我感到疲惫和焦虑。",
+    "我常常觉得日子过得没有意思。",
+    "我很少能感到真正的开心和满足。",
+    "我常觉得自己的生活缺少盼头。",
+    "我对目前的生活状态不太满意。",
+    "我常常怀念过去，觉得现在不如从前。",
+    "我很少从日常生活中找到乐趣。",
+    "我觉得自己过去的付出没有得到回报。",
+    "我常感到生活枯燥、重复。",
+    "我很少对未来抱有期待。",
+    "我常常觉得活着有点辛苦。",
+    "我很少参与让自己高兴的活动。",
+    "我常感到生活没有目标和方向。",
+    "遇到困难时，我很难找到人帮忙。",
+    "我很少和子女或亲人谈心交流。",
+    "我感到缺乏来自家人的支持和理解。",
+    "我很难向别人开口求助。",
+    "我常常一个人扛着问题，不愿说出口。",
+    "身边关心我的人很少。",
+    "我很少参加社区或集体的活动。",
+    "我常感到没有可以依靠的人。",
+    "我的烦恼常常无处倾诉。",
+    "我感到自己越来越与外界脱节。",
+    "我很难获得情感上的安慰和陪伴。",
+    "我常常觉得求助别人是一种负担。"
+   ]}
+];
+/* ====BANK_END==== */
+</script>
+
+<script>
+(function(){
+  "use strict";
+  /* ===================== 基础工具 ===================== */
+  var LS_USERS = "jg_users";
+  var LS_SESSION = "jg_session";
+  var LS_RESULTS = "jg_results";
+
+  function store(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  function load(k, d){ try { var s = localStorage.getItem(k); return s ? JSON.parse(s) : d; } catch(e){ return d; } }
+  function $(id){ return document.getElementById(id); }
+  function show(id){ document.querySelectorAll(".view").forEach(function(v){ v.classList.add("hidden"); }); $(id).classList.remove("hidden"); }
+  function toast(msg){ var t=$("toast"); $("toastText").textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove("show"); }, 2400); }
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+  var users = load(LS_USERS, []);
+  var session = load(LS_SESSION, null); // {id}
+  var results = load(LS_RESULTS, []);
+
+  function curUser(){
+    if(!session) return null;
+    for(var i=0;i<users.length;i++){ if(users[i].id===session.id) return users[i]; }
+    return null;
+  }
+  function saveUsers(){ store(LS_USERS, users); }
+
+  function findAgeGroup(age){
+    var g = window.AGE_GROUPS;
+    for(var i=0;i<g.length;i++){ if(age>=g[i].min && age<=g[i].max) return g[i]; }
+    return g[g.length-1];
+  }
+
+  /* 简易身份证校验：18位，末位可为X */
+  function validId(v){
+    v=(v||"").trim();
+    return /^\d{17}[\dXx]$/.test(v) || /^\d{15}$/.test(v);
+  }
+  function maskId(v){
+    v=(v||"").trim();
+    if(v.length<8) return v;
+    return v.slice(0,4)+"********"+v.slice(-4);
+  }
+
+  /* ===================== 视图切换 ===================== */
+  function renderTopbar(){
+    var u = curUser();
+    if(u && u.name){
+      $("topbar").classList.remove("hidden");
+      $("topUserName").textContent = u.name + " · " + u.unit;
+    } else {
+      $("topbar").classList.add("hidden");
+    }
+  }
+
+  function route(){
+    var u = curUser();
+    if(!u){
+      show("view-auth");
+      renderTopbar();
+      return;
+    }
+    // 信息未完善 -> 去信息页
+    if(!u.name || !u.unit || !u.age){
+      show("view-info");
+      $("if_id").value = u.id;
+      renderTopbar();
+      return;
+    }
+    show("view-home");
+    renderTopbar();
+    $("homeHello").textContent = "你好，" + u.name;
+    var g = findAgeGroup(u.age);
+    $("homeIntro").textContent = "欢迎使用「锦观心理测评」。本测评共 60 道选择题，将根据您的年龄段（" + g.label + "）匹配对应题目，帮助您了解近期的身心状态。完成约需 10 分钟。";
+    var chips = [
+      ["年龄段", g.label],
+      ["姓名", u.name],
+      ["单位", u.unit],
+      ["年龄", u.age + " 岁"]
+    ];
+    $("homeMeta").innerHTML = "";
+    chips.forEach(function(c){
+      var s = el("span","chip",""); s.innerHTML = c[0] + "：<b>" + c[1] + "</b>";
+      $("homeMeta").appendChild(s);
+    });
+  }
+
+  /* ===================== 登录/注册 ===================== */
+  function setTab(name){
+    var isReg = name==="register";
+    $("loginForm").hidden = isReg;
+    $("registerForm").hidden = !isReg;
+    document.querySelectorAll(".tabs .tab").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-tab")===name);
+    });
+  }
+  document.querySelectorAll(".tabs .tab").forEach(function(b){
+    b.addEventListener("click", function(){ setTab(b.getAttribute("data-tab")); });
+  });
+  $("gotoReg").addEventListener("click", function(){ setTab("register"); });
+  $("gotoLogin").addEventListener("click", function(){ setTab("login"); });
+
+  function showErr(id, msg){
+    var e=$(id); e.textContent=msg||""; e.classList.toggle("show", !!msg);
+  }
+
+  $("loginForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var id=$("lg_id").value.trim(), pw=$("lg_pw").value;
+    var ok=true;
+    if(!validId(id)){ showErr("lg_id_err","请输入正确的身份证号"); ok=false; } else showErr("lg_id_err","");
+    if(!pw){ showErr("lg_pw_err","请输入密码"); ok=false; } else showErr("lg_pw_err","");
+    if(!ok) return;
+    var found=null;
+    for(var i=0;i<users.length;i++){ if(users[i].id===id){ found=users[i]; break; } }
+    if(!found){ showErr("lg_id_err","该账号尚未注册"); return; }
+    if(found.pw!==pw){ showErr("lg_pw_err","密码不正确"); return; }
+    session={id:id}; store(LS_SESSION, session);
+    $("lg_pw").value=""; toast("登录成功");
+    route();
+  });
+
+  $("registerForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var id=$("rg_id").value.trim(), pw=$("rg_pw").value, pw2=$("rg_pw2").value;
+    var ok=true;
+    if(!validId(id)){ showErr("rg_id_err","请输入正确的身份证号"); ok=false; } else showErr("rg_id_err","");
+    if(pw.length<6){ showErr("rg_pw_err","密码至少6位"); ok=false; } else showErr("rg_pw_err","");
+    if(pw2!==pw){ showErr("rg_pw2_err","两次密码不一致"); ok=false; } else showErr("rg_pw2_err","");
+    if(!ok) return;
+    var dup=false;
+    for(var i=0;i<users.length;i++){ if(users[i].id===id){ dup=true; break; } }
+    if(dup){ showErr("rg_id_err","该身份证号已注册，请直接登录"); return; }
+    users.push({id:id, pw:pw, name:"", unit:"", age:null, reg:Date.now()});
+    saveUsers();
+    session={id:id}; store(LS_SESSION, session);
+    $("rg_id").value=""; $("rg_pw").value=""; $("rg_pw2").value="";
+    toast("注册成功，请完善信息");
+    route();
+  });
+
+  /* ===================== 个人信息 ===================== */
+  $("infoForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var u=curUser(); if(!u) return;
+    var id=$("if_id").value.trim(), name=$("if_name").value.trim(), unit=$("if_unit").value.trim(), age=parseInt($("if_age").value,10);
+    var ok=true;
+    if(!validId(id)){ showErr("if_id_err","请输入正确的身份证号"); ok=false; } else showErr("if_id_err","");
+    if(!name){ showErr("if_name_err","请输入姓名"); ok=false; } else showErr("if_name_err","");
+    if(!unit){ showErr("if_unit_err","请输入单位"); ok=false; } else showErr("if_unit_err","");
+    if(!age || age<1 || age>120){ showErr("if_age_err","请输入有效年龄"); ok=false; } else showErr("if_age_err","");
+    if(!$("if_agree").checked){ toast("请勾选同意《免责声明》"); return; }
+    if(!ok) return;
+    u.id=id; u.name=name; u.unit=unit; u.age=age;
+    saveUsers();
+    toast("信息已保存");
+    route();
+  });
+
+  /* ===================== 修改个人信息 ===================== */
+  var profileModal=$("profileModal");
+  $("btnEditProfile").addEventListener("click", function(){
+    var u=curUser(); if(!u) return;
+    $("pf_id").value=u.id; $("pf_name").value=u.name; $("pf_unit").value=u.unit; $("pf_age").value=u.age||"";
+    showErr("pf_name_err",""); showErr("pf_unit_err",""); showErr("pf_age_err","");
+    profileModal.classList.remove("hidden");
+  });
+  profileModal.querySelectorAll("[data-close]").forEach(function(b){
+    b.addEventListener("click", function(){ profileModal.classList.add("hidden"); });
+  });
+  $("profileForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var u=curUser(); if(!u) return;
+    var name=$("pf_name").value.trim(), unit=$("pf_unit").value.trim(), age=parseInt($("pf_age").value,10);
+    var ok=true;
+    if(!name){ showErr("pf_name_err","请输入姓名"); ok=false; } else showErr("pf_name_err","");
+    if(!unit){ showErr("pf_unit_err","请输入单位"); ok=false; } else showErr("pf_unit_err","");
+    if(!age || age<1 || age>120){ showErr("pf_age_err","请输入有效年龄"); ok=false; } else showErr("pf_age_err","");
+    if(!ok) return;
+    u.name=name; u.unit=unit; u.age=age;
+    saveUsers();
+    profileModal.classList.add("hidden");
+    toast("个人信息已更新");
+    route();
+  });
+
+  /* ===================== 退出 ===================== */
+  $("btnLogout").addEventListener("click", function(){
+    session=null; store(LS_SESSION, null);
+    show("view-auth"); renderTopbar(); setTab("login");
+    toast("已安全退出");
+  });
+
+  /* ===================== 测试 ===================== */
+  var quiz = { g:null, answers:[], idx:0 };
+  var OPT_LABELS = ["A","B","C","D","E"];
+  var OPT_TEXTS = ["完全不符合","比较不符合","一般 / 说不清","比较符合","完全符合"];
+
+  $("btnStart").addEventListener("click", function(){
+    var u=curUser(); if(!u) return;
+    quiz.g = findAgeGroup(u.age);
+    quiz.answers = new Array(quiz.g.q.length).fill(null);
+    quiz.idx = 0;
+    $("qTotal").textContent = quiz.g.q.length;
+    show("view-test");
+    renderTopbar();
+    renderQ();
+  });
+
+  function renderQ(){
+    var g=quiz.g, i=quiz.idx;
+    $("qNo").textContent = i+1;
+    $("qBar").style.width = (100*(i)/g.q.length) + "%";
+    $("qDim").textContent = g.dims[qDimIdx(i)];
+    $("qDimLabel").textContent = "维度：" + g.dims[qDimIdx(i)];
+    var qn = g.q[i];
+    $("qText").textContent = (i+1) + ". " + qn;
+    var box=$("qOptions"); box.innerHTML="";
+    for(var o=0;o<5;o++){
+      var opt=el("div","option");
+      var dot=el("span","dot"); dot.textContent=OPT_LABELS[o];
+      var lab=el("span","label"); lab.textContent=OPT_TEXTS[o];
+      opt.appendChild(dot); opt.appendChild(lab);
+      if(quiz.answers[i]===o){ opt.classList.add("sel"); }
+      opt.addEventListener("click", (function(oi, node){ return function(){ quiz.answers[quiz.idx]=oi; selOption(node); }; })(o,opt));
+      box.appendChild(opt);
+    }
+    $("btnPrev").disabled = (i===0);
+    $("btnPrev").style.opacity = (i===0)?0.45:1;
+    var last = (i===g.q.length-1);
+    $("btnNext").textContent = last ? "提交测评" : "下一题";
+  }
+  function selOption(node){
+    document.querySelectorAll("#qOptions .option").forEach(function(o){ o.classList.remove("sel"); });
+    node.classList.add("sel");
+  }
+  function qDimIdx(i){
+    // 每个维度 12 题（60/5）
+    return Math.min(4, Math.floor(i/12));
+  }
+  $("btnPrev").addEventListener("click", function(){
+    if(quiz.idx>0){ quiz.idx--; renderQ(); }
+  });
+  $("btnNext").addEventListener("click", function(){
+    var g=quiz.g;
+    if(quiz.answers[quiz.idx]===null){ toast("请先选择一项再继续"); return; }
+    if(quiz.idx < g.q.length-1){ quiz.idx++; renderQ(); return; }
+    // 提交
+    for(var i=0;i<g.q.length;i++){ if(quiz.answers[i]===null){ quiz.idx=i; toast("第 "+(i+1)+" 题尚未作答"); renderQ(); return; } }
+    submitQuiz();
+  });
+
+  function submitQuiz(){
+    var u=curUser(); if(!u) return;
+    var g=quiz.g;
+    var dims = new Array(5).fill(0);
+    var total=0;
+    for(var i=0;i<g.q.length;i++){
+      var s=quiz.answers[i]+1; // 1-5
+      total+=s;
+      dims[qDimIdx(i)] += s;
+    }
+    var rec={ id:u.id, name:u.name, unit:u.unit, age:u.age, group:g.label,
+      total:total, dims:dims, time:Date.now() };
+    results.push(rec); store(LS_RESULTS, results);
+    showResult(rec);
+    show("view-result"); renderTopbar();
+  }
+
+  /* ===================== 结果 ===================== */
+  function levelOf(total){
+    if(total<=120) return {lv:1,name:"状态良好",cls:"level-1"};
+    if(total<=180) return {lv:2,name:"轻度困扰",cls:"level-2"};
+    if(total<=240) return {lv:3,name:"中度困扰",cls:"level-3"};
+    return {lv:4,name:"需要关注",cls:"level-4"};
+  }
+  var LEVEL_DESC = {
+    1:"您的总体状态平稳，身心处于较为放松、良好的水平。请继续保持规律作息、适度运动与良好的社交，维持这份平衡。",
+    2:"您近期可能承受一定程度的压力或困扰，整体状态尚可但略感紧绷。建议适当放松、增加休息与倾诉，观察自身感受。",
+    3:"您近期存在较为明显的心理困扰，部分维度得分偏高。建议正视这些感受，主动调节压力，并向单位心理关爱服务或专业人士寻求帮助。",
+    4:"您近期心理压力较突出，多个维度提示需要关注。强烈建议尽快联系单位心理关爱服务或专业心理机构，获得支持与疏导。"
+  };
+  function showResult(rec){
+    var lv = levelOf(rec.total);
+    $("scoreNum").textContent = rec.total;
+    $("scoreRing").style.setProperty("--p", Math.min(100, (rec.total-60)/240*100) + "%");
+    var badge=$("levelBadge"); badge.className="level-badge "+lv.cls; badge.textContent=lv.name;
+    $("resultDesc").textContent = LEVEL_DESC[lv.lv] + "（本份总分为 " + rec.total + " 分）";
+    var g = findAgeGroup(rec.age);
+    var box=$("dimBars"); box.innerHTML="";
+    var colors=["#1f8a70","#4dbda0","#5f9ea0","#c08a3e","#b77a9c"];
+    var names = g.dims;
+    for(var i=0;i<5;i++){
+      var s=rec.dims[i]; // 12-60
+      var dLabel = s<=24?"良好":(s<=36?"轻度":(s<=48?"中度":"较高"));
+      var row=el("div","dim-row");
+      var head=el("div","dim-head");
+      var l=el("span",""); l.textContent=names[i]+" · "+dLabel;
+      var r=el("b",""); r.textContent=s+" / 60";
+      head.appendChild(l); head.appendChild(r);
+      var track=el("div","dim-track");
+      var fill=el("div","dim-fill");
+      fill.style.background=colors[i];
+      fill.style.width=((s-12)/48*100)+"%";
+      track.appendChild(fill);
+      row.appendChild(head); row.appendChild(track);
+      box.appendChild(row);
+    }
+  }
+  $("btnHome").addEventListener("click", function(){ route(); });
+  $("btnRetry").addEventListener("click", function(){
+    var u=curUser(); if(!u) return;
+    quiz.g=findAgeGroup(u.age); quiz.answers=new Array(quiz.g.q.length).fill(null); quiz.idx=0;
+    $("qTotal").textContent=quiz.g.q.length;
+    show("view-test"); renderTopbar(); renderQ();
+  });
+
+  /* ===================== 初始化 ===================== */
+  setTab("login");
+  route();
+})();
+</script>
+</body>
+</html>
